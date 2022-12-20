@@ -22,12 +22,68 @@ public class rocket_launch : MonoBehaviour
     public Color skyShift = Color.blue;
 
     public ParticleSystem Stars;
+    public ParticleSystem Engine;
+    public bool avoiding = false;
 
 
     // Start is called before the first frame update
-    void Start()
+    IEnumerator flight()
     {
         
+            if (Vector3.Distance(this.transform.position, flightWaypoints[currentWaypoint].transform.position) < 3)
+            {
+                currentWaypoint++;
+
+
+                if (currentWaypoint > 1)
+                {
+                    currentWaypoint = 0;
+
+
+                }
+            }
+
+            Vector3 directon = rotPoint.transform.position - transform.position;
+            Quaternion toRotate = Quaternion.FromToRotation(Vector3.up, directon);
+            transform.rotation = toRotate;
+
+            transform.position = Vector3.MoveTowards(transform.position, flightWaypoints[currentWaypoint].transform.position, speed * Time.deltaTime);
+
+        yield return null;
+    }
+    IEnumerator skyChange()
+    {
+        if (Vector3.Distance(this.transform.position, flightWaypoints[currentWaypoint].transform.position) < 3)
+        {
+            currentWaypoint++;
+
+            if (currentWaypoint == 1)
+            {
+                skyShift = blueNight;
+
+            }
+
+            if (currentWaypoint > 1)
+            {
+                currentWaypoint = 0;
+                skyShift = purpleNight;
+
+            }
+        }
+        Renderer rend = sky.GetComponent<Renderer>();
+        rend.material.color = Color.Lerp(rend.material.color, skyShift, 0.01f);
+        yield return null;
+    }
+
+    IEnumerator avoid()
+    {
+        Vector3 directon = rotPoint.transform.position - transform.position;
+        Quaternion toRotate = Quaternion.FromToRotation(Vector3.up, directon);
+        transform.rotation = toRotate;
+
+        transform.position = Vector3.MoveTowards(transform.position, directon, speed * Time.deltaTime);
+
+        yield return null;
     }
 
 
@@ -112,6 +168,7 @@ public class rocket_launch : MonoBehaviour
         if(reachedLaunchEnd == false)
         {
             this.transform.Translate(0, speed * Time.deltaTime, 0);
+            Engine.Play();
 
             if(Vector3.Distance(this.transform.position, launchEnd) < 3)
             {
@@ -153,45 +210,51 @@ public class rocket_launch : MonoBehaviour
 
             else if (reachedSpinEnd == true)
             {
-                if(flightWaypoints.Count == 0)
+                if (flightWaypoints.Count == 0)
                 {
                     createSky();
                 }
-                else
+                if(avoiding == false)
                 {
-
-                    Renderer rend = sky.GetComponent<Renderer>();
-                    
-
-
-                    if (Vector3.Distance(this.transform.position, flightWaypoints[currentWaypoint].transform.position) < 3)
-                    {
-                        currentWaypoint++;
-
-                        if(currentWaypoint == 1)
-                        {
-                            skyShift = blueNight;
-                            
-                        }
-                        
-                        if (currentWaypoint > 1)
-                        {
-                            currentWaypoint = 0;
-                            skyShift = purpleNight;
- 
-                        }
-                    }
-
-                    Vector3 directon = rotPoint.transform.position - transform.position;
-                    Quaternion toRotate = Quaternion.FromToRotation(Vector3.up, directon);
-                    transform.rotation = toRotate;
-
-                    transform.position = Vector3.MoveTowards(transform.position, flightWaypoints[currentWaypoint].transform.position, speed * Time.deltaTime);
-
-                    rend.material.color = Color.Lerp(rend.material.color, skyShift, 0.01f);
-
+                    StartCoroutine(flight());
                 }
+                
+                StartCoroutine(skyChange());
             }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == "Danger")
+        {
+            Debug.Log("Avoid");
+            StopCoroutine(flight());
+            StartCoroutine(avoid());
+            avoiding = true;
+            
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Danger")
+        {
+            Debug.Log("Avoid");
+            StopCoroutine(flight());
+            StartCoroutine(avoid());
+            avoiding = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Danger")
+        {
+            Debug.Log("Avoid");
+            StopCoroutine(avoid());
+            StartCoroutine(flight());
+            avoiding = false;
         }
     }
 }
