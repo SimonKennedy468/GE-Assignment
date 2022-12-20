@@ -117,7 +117,7 @@ public class rocket_launch : MonoBehaviour
     }
     */
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
     
         if(reachedLaunchEnd == false)
@@ -128,7 +128,7 @@ public class rocket_launch : MonoBehaviour
             if(Vector3.Distance(this.transform.position, launchEnd) < 3)
             {
                 reachedLaunchEnd = true;
-                startTime = Time.time;
+                //startTime = Time.time;
             }
         }
         else
@@ -153,14 +153,15 @@ public class rocket_launch : MonoBehaviour
                     */
 
                     //fromToRotation
-                    
-                    Vector3 directon = waypoints[currentWaypoint].transform.position - transform.position;
-                    Quaternion toRotate = Quaternion.FromToRotation(transform.up, directon);
-                    Debug.Log("Current rotation ---------------------------------------------------------------->" + toRotate);
-                    //transform.rotation = Quaternion.Lerp(this.transform.rotation, toRotate, spinSpeed * Time.deltaTime);
-                    transform.rotation = toRotate;
+
+                    //Vector3 directon = waypoints[currentWaypoint].transform.position - transform.position;
+                    //Quaternion toRotate = Quaternion.FromToRotation(transform.up, directon);
+                    //Debug.Log("Current rotation ---------------------------------------------------------------->" + toRotate);
+                    //transform.rotation = Quaternion.Lerp(transform.rotation, toRotate, spinSpeed * Time.deltaTime);
+                    //transform.rotation = toRotate;
                     //this.transform.Translate(0, speed * Time.deltaTime, 0);
                     transform.position = Vector3.MoveTowards(transform.position, waypoints[currentWaypoint].transform.position, speed * Time.deltaTime);
+
 
 
 
@@ -196,14 +197,28 @@ public class rocket_launch : MonoBehaviour
                     if (Vector3.Distance(this.transform.position, waypoints[currentWaypoint].transform.position) < 3)
                     {
                         currentWaypoint++;
+
+                        if (currentWaypoint == numWayPoints)
+                        {
+                            currentWaypoint = 0;
+                            reachedSpinEnd = true;
+
+                        }
+                        else
+                        {
+                            Vector3 directon = waypoints[currentWaypoint].transform.position - transform.position;
+                            Quaternion toRotate = Quaternion.FromToRotation(Vector3.up, directon);
+                            Debug.Log("Current rotation ---------------------------------------------------------------->" + toRotate);
+                            //transform.rotation = Quaternion.Lerp(transform.rotation, toRotate, spinSpeed * Time.deltaTime);
+                            transform.rotation = toRotate;
+                            
+
+                        }
+
+
                     }
 
-                    if (currentWaypoint == numWayPoints)
-                    {
-                        currentWaypoint = 0;
-                        reachedSpinEnd = true;
-                        
-                    }
+                    
                     
                 }
             }
