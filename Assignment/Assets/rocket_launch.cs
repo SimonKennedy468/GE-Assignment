@@ -16,14 +16,21 @@ public class rocket_launch : MonoBehaviour
     List<GameObject> waypoints = new List<GameObject>();
     List<GameObject> flightWaypoints = new List<GameObject>();
     Vector3 launchEnd;
+    //Vector3 currRot;
     public Transform target;
     public GameObject sky;
+    public GameObject rotPoint;
+    //public GameObject rotPointBottom;
     public int currSkyMat = 0;
 
-    public Material blueNight;
-    public Material purpleNight;
-    public Material redNight;
-    public Material greenNight;
+    public Color blueNight;
+    public Color purpleNight;
+    public Color redNight;
+    public Color greenNight;
+    public Color skyShift = Color.blue;
+    public Shader shader;
+
+    public Material skymat;
 
     public float journeyTime = 25f;
 
@@ -90,7 +97,7 @@ public class rocket_launch : MonoBehaviour
         }
     }
 
-    void createFlightPoints()
+    void createSky()
     {
         float x;
         float y;
@@ -105,8 +112,8 @@ public class rocket_launch : MonoBehaviour
         for (int i = 0; i < numWayPoints; i++)
         {
             angle = i * Mathf.PI * 2 / 2;
-            x = Mathf.Sin(angle) * 7;
-            y = Mathf.Cos(angle) * 7;
+            x = Mathf.Sin(angle) * 15;
+            y = Mathf.Cos(angle) * 15;
 
             GameObject go = new GameObject();
             Vector3 pos = launchEnd + new Vector3(x, y, 0);
@@ -118,6 +125,10 @@ public class rocket_launch : MonoBehaviour
 
         Mesh m = new Mesh();
         sky = new GameObject();
+        rotPoint = new GameObject();
+        //rotPointBottom = new GameObject();
+
+
         sky = GameObject.CreatePrimitive(PrimitiveType.Plane);
         x = (flightWaypoints[0].transform.position.x + flightWaypoints[1].transform.position.x) * 0.5f;
         y = (flightWaypoints[0].transform.position.y + flightWaypoints[1].transform.position.y) * 0.5f;
@@ -125,7 +136,15 @@ public class rocket_launch : MonoBehaviour
         sky.transform.position = new Vector3(x, y, z);
         sky.transform.Rotate(90, 0, 0);
         sky.transform.localScale = new Vector3(3, 3, 3);
-        sky.GetComponent<Renderer>().material = blueNight;
+
+        rotPoint.transform.position = sky.transform.position + new Vector3(50, 0, 0);
+        
+        //skyShift = blueNight;
+
+
+
+
+        sky.GetComponent<Renderer>().material.color = blueNight;
 
         //GameObject stars = new GameObject("stars");
         //stars.AddComponent(ParticleSystem);
@@ -257,42 +276,36 @@ public class rocket_launch : MonoBehaviour
             {
                 if(flightWaypoints.Count == 0)
                 {
-                    createFlightPoints();
+                    createSky();
                 }
                 else
                 {
+
+                    Renderer rend = sky.GetComponent<Renderer>();
+                    
+
+
                     if (Vector3.Distance(this.transform.position, flightWaypoints[currentWaypoint].transform.position) < 3)
                     {
                         currentWaypoint++;
+
+                        Debug.Log("Current mat color" + rend.material.color);
+                        Debug.Log("target Color" + blueNight);
+
+                        if(currentWaypoint == 1)
+                        {
+                            skyShift = blueNight;
+                            //currRot = rotPointBottom.transform.position;
+                            
+                        }
                         
                         if (currentWaypoint > 1)
                         {
                             currentWaypoint = 0;
+                            skyShift = purpleNight;
+                            //currRot = rotPointTop.transform.position;
                         }
                         
-                        if(currSkyMat == 0)
-                        {
-                            sky.GetComponent<Renderer>().material = blueNight;
-                        }
-                        if (currSkyMat == 1)
-                        {
-                            sky.GetComponent<Renderer>().material = purpleNight;
-                        }
-                        if (currSkyMat == 2)
-                        {
-                            sky.GetComponent<Renderer>().material = redNight;
-                        }
-                        if (currSkyMat == 3)
-                        {
-                            sky.GetComponent<Renderer>().material = greenNight;
-                        }
-                        currSkyMat++;
-                        if (currSkyMat > 3)
-                        {
-                            currSkyMat = 0;
-                        }
-                        
-
                         //Vector3 directon = flightWaypoints[currentWaypoint].transform.position - transform.position;
                         //Quaternion toRotate = Quaternion.FromToRotation(Vector3.up, directon);
 
@@ -309,9 +322,15 @@ public class rocket_launch : MonoBehaviour
 
                     }
 
+                    Vector3 directon = rotPoint.transform.position - transform.position;
+                    Quaternion toRotate = Quaternion.FromToRotation(Vector3.up, directon);
+                    Debug.Log("Current rotation ---------------------------------------------------------------->" + toRotate);
+                    //transform.rotation = Quaternion.Slerp(transform.rotation, toRotate, spinSpeed * Time.deltaTime);
+                    transform.rotation = toRotate;
 
-                    
                     transform.position = Vector3.MoveTowards(transform.position, flightWaypoints[currentWaypoint].transform.position, speed * Time.deltaTime);
+
+                    rend.material.color = Color.Lerp(rend.material.color, skyShift, 0.01f);
 
                 }
             }
