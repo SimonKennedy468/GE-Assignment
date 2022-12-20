@@ -17,6 +17,13 @@ public class rocket_launch : MonoBehaviour
     List<GameObject> flightWaypoints = new List<GameObject>();
     Vector3 launchEnd;
     public Transform target;
+    public GameObject sky;
+    public int currSkyMat = 0;
+
+    public Material blueNight;
+    public Material purpleNight;
+    public Material redNight;
+    public Material greenNight;
 
     public float journeyTime = 25f;
 
@@ -87,6 +94,7 @@ public class rocket_launch : MonoBehaviour
     {
         float x;
         float y;
+        float z;
         float angle;
 
         angle = 1 * Mathf.PI * 2;
@@ -106,6 +114,24 @@ public class rocket_launch : MonoBehaviour
 
             flightWaypoints.Add(go);
         }
+
+
+        Mesh m = new Mesh();
+        sky = new GameObject();
+        sky = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        x = (flightWaypoints[0].transform.position.x + flightWaypoints[1].transform.position.x) * 0.5f;
+        y = (flightWaypoints[0].transform.position.y + flightWaypoints[1].transform.position.y) * 0.5f;
+        z = (flightWaypoints[0].transform.position.z + flightWaypoints[1].transform.position.z) * 0.5f;
+        sky.transform.position = new Vector3(x, y, z);
+        sky.transform.Rotate(90, 0, 0);
+        sky.transform.localScale = new Vector3(3, 3, 3);
+        sky.GetComponent<Renderer>().material = blueNight;
+
+        //GameObject stars = new GameObject("stars");
+        //stars.AddComponent(ParticleSystem);
+
+
+        //stars.GetComponent(MeshFilter).mesh = m;
     }
     /*
     IEnumerator spin()
@@ -117,7 +143,7 @@ public class rocket_launch : MonoBehaviour
     }
     */
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
     
         if(reachedLaunchEnd == false)
@@ -142,6 +168,14 @@ public class rocket_launch : MonoBehaviour
                     Debug.Log("current waypoint ------------------------------>" + currentWaypoint);
                     Debug.Log(reachedSpinEnd);
 
+                    transform.position = Vector3.MoveTowards(transform.position, waypoints[currentWaypoint].transform.position, speed * Time.deltaTime);
+
+
+                    /*
+                     * Previous attempts to get ship to rotate around in a spin, these do not work
+                     */
+
+
                     //Vector3 slerp
                     /*
                     Vector3 startcen = waypoints[currentWaypoint] - launchEnd - new Vector3(0, 1, 0);
@@ -160,10 +194,6 @@ public class rocket_launch : MonoBehaviour
                     //transform.rotation = Quaternion.Lerp(transform.rotation, toRotate, spinSpeed * Time.deltaTime);
                     //transform.rotation = toRotate;
                     //this.transform.Translate(0, speed * Time.deltaTime, 0);
-                    transform.position = Vector3.MoveTowards(transform.position, waypoints[currentWaypoint].transform.position, speed * Time.deltaTime);
-
-
-
 
                     //default
                     /*
@@ -209,7 +239,7 @@ public class rocket_launch : MonoBehaviour
                             Vector3 directon = waypoints[currentWaypoint].transform.position - transform.position;
                             Quaternion toRotate = Quaternion.FromToRotation(Vector3.up, directon);
                             Debug.Log("Current rotation ---------------------------------------------------------------->" + toRotate);
-                            //transform.rotation = Quaternion.Lerp(transform.rotation, toRotate, spinSpeed * Time.deltaTime);
+                            //transform.rotation = Quaternion.Slerp(transform.rotation, toRotate, spinSpeed * Time.deltaTime);
                             transform.rotation = toRotate;
                             
 
@@ -234,18 +264,53 @@ public class rocket_launch : MonoBehaviour
                     if (Vector3.Distance(this.transform.position, flightWaypoints[currentWaypoint].transform.position) < 3)
                     {
                         currentWaypoint++;
+                        
                         if (currentWaypoint > 1)
                         {
                             currentWaypoint = 0;
                         }
+                        
+                        if(currSkyMat == 0)
+                        {
+                            sky.GetComponent<Renderer>().material = blueNight;
+                        }
+                        if (currSkyMat == 1)
+                        {
+                            sky.GetComponent<Renderer>().material = purpleNight;
+                        }
+                        if (currSkyMat == 2)
+                        {
+                            sky.GetComponent<Renderer>().material = redNight;
+                        }
+                        if (currSkyMat == 3)
+                        {
+                            sky.GetComponent<Renderer>().material = greenNight;
+                        }
+                        currSkyMat++;
+                        if (currSkyMat > 3)
+                        {
+                            currSkyMat = 0;
+                        }
+                        
+
+                        //Vector3 directon = flightWaypoints[currentWaypoint].transform.position - transform.position;
+                        //Quaternion toRotate = Quaternion.FromToRotation(Vector3.up, directon);
+
+                        //toRotate = Quaternion.Lerp(this.transform.rotation, toRotate, spinSpeed * Time.deltaTime);
+
+                        //attempt to restrict rotation to z axis
+                        //Quaternion toRotateEuler = Quaternion.Slerp(this.transform.rotation, toRotate, spinSpeed * Time.deltaTime);
+                        //toRotateEuler = Quaternion.Euler(new Vector3(0f, 0f, toRotateEuler.eulerAngles.z));
+                        //transform.rotation = toRotateEuler;
+
+                        //transform.rotation = toRotate;
+
+
+
                     }
 
 
-                    //Vector3 directon = flightWaypoints[currentWaypoint].transform.position - transform.position;
-                    //Quaternion toRotate = Quaternion.FromToRotation(transform.forward, directon);
-                    //transform.rotation = Quaternion.Lerp(this.transform.rotation, toRotate, spinSpeed * Time.deltaTime);
-                    //transform.rotation = toRotate;
-                    //this.transform.Translate(0, speed * Time.deltaTime, 0);
+                    
                     transform.position = Vector3.MoveTowards(transform.position, flightWaypoints[currentWaypoint].transform.position, speed * Time.deltaTime);
 
                 }
