@@ -112,7 +112,6 @@ public class rocket_launch : MonoBehaviour
         if(reachedLaunchEnd == false)
         {
             this.transform.Translate(0, speed * Time.deltaTime, 0);
-            Debug.Log(Vector3.Distance(this.transform.position, launchEnd));
 
             if(Vector3.Distance(this.transform.position, launchEnd) < 3)
             {
@@ -126,10 +125,6 @@ public class rocket_launch : MonoBehaviour
             {
                 if (currentWaypoint != numWayPoints)
                 {
-                    
-
-                    Debug.Log("current waypoint ------------------------------>" + currentWaypoint);
-                    Debug.Log(reachedSpinEnd);
 
                     transform.position = Vector3.MoveTowards(transform.position, waypoints[currentWaypoint].transform.position, speed * Time.deltaTime);
 
@@ -148,7 +143,6 @@ public class rocket_launch : MonoBehaviour
                         {
                             Vector3 directon = waypoints[currentWaypoint].transform.position - transform.position;
                             Quaternion toRotate = Quaternion.FromToRotation(Vector3.up, directon);
-                            Debug.Log("Current rotation ---------------------------------------------------------------->" + toRotate);
                             transform.rotation = toRotate;
                             
 
@@ -174,9 +168,6 @@ public class rocket_launch : MonoBehaviour
                     {
                         currentWaypoint++;
 
-                        Debug.Log("Current mat color" + rend.material.color);
-                        Debug.Log("target Color" + blueNight);
-
                         if(currentWaypoint == 1)
                         {
                             skyShift = blueNight;
@@ -193,7 +184,6 @@ public class rocket_launch : MonoBehaviour
 
                     Vector3 directon = rotPoint.transform.position - transform.position;
                     Quaternion toRotate = Quaternion.FromToRotation(Vector3.up, directon);
-                    Debug.Log("Current rotation ---------------------------------------------------------------->" + toRotate);
                     transform.rotation = toRotate;
 
                     transform.position = Vector3.MoveTowards(transform.position, flightWaypoints[currentWaypoint].transform.position, speed * Time.deltaTime);
