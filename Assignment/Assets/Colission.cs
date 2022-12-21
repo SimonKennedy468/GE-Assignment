@@ -19,6 +19,7 @@ public class Colission : MonoBehaviour
             Debug.Log("collided");
             Rigidbody rb;
             rb = GetComponent<Rigidbody>();
+            rb.isKinematic = false;
             rb.useGravity = true;
             Engine.Stop();
             rocket = GameObject.Find("Rocket");
