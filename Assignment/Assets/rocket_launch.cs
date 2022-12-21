@@ -24,6 +24,8 @@ public class rocket_launch : MonoBehaviour
     public ParticleSystem Stars;
     public ParticleSystem Engine;
     public bool avoiding = false;
+    public bool gameOver = false;
+   
 
 
     // Start is called before the first frame update
@@ -51,7 +53,7 @@ public class rocket_launch : MonoBehaviour
 
         yield return null;
     }
-    IEnumerator skyChange()
+    public IEnumerator skyChange()
     {
         if (Vector3.Distance(this.transform.position, flightWaypoints[currentWaypoint].transform.position) < 3)
         {
@@ -84,6 +86,35 @@ public class rocket_launch : MonoBehaviour
         transform.position = Vector3.MoveTowards(transform.position, directon, speed * Time.deltaTime);
 
         yield return null;
+    }
+
+
+    public void startDestroySky()
+    {
+        Debug.Log("-------------------------> start destroy");
+        StartCoroutine(destroySky());
+        StopCoroutine(skyChange());
+        StopCoroutine(flight());
+        gameOver = true;
+        
+    }
+    public IEnumerator destroySky()
+    {
+        
+        Stars.Stop();
+        if (gameOver == true)
+        {
+            sky.transform.localScale -= Vector3.one * Time.deltaTime * 3;
+            Stars.transform.localScale -= Vector3.one * Time.deltaTime * 3;
+            Debug.Log("Shrinking...");
+            if (sky.transform.localScale.x < 0.1f)
+            {
+                Destroy(sky);
+                Stars.Stop();
+            }
+        }
+        yield return null;
+
     }
 
 
@@ -210,16 +241,26 @@ public class rocket_launch : MonoBehaviour
 
             else if (reachedSpinEnd == true)
             {
-                if (flightWaypoints.Count == 0)
+                if (gameOver == false)
                 {
-                    createSky();
+                    if (flightWaypoints.Count == 0)
+                    {
+                        createSky();
+                    }
+                    if(avoiding == false)
+                    {
+                        StartCoroutine(flight());
+                    }
+
+                    StartCoroutine(skyChange());
                 }
-                if(avoiding == false)
+                else
                 {
-                    StartCoroutine(flight());
+                    StartCoroutine(destroySky());
                 }
                 
-                StartCoroutine(skyChange());
+                
+                
             }
         }
     }
