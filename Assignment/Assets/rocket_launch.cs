@@ -166,6 +166,7 @@ public class rocket_launch : MonoBehaviour
         Stars.transform.position = rotPoint.transform.position - new Vector3(35, 0, -0.5f);
         Stars.transform.localScale = new Vector3(1, 1, 1);
         Stars.Play();
+        Debug.Log("Stars have played");
 
 
         sky.GetComponent<Renderer>().material.color = blueNight;
