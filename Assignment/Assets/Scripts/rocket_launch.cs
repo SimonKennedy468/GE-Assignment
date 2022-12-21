@@ -158,6 +158,7 @@ public class rocket_launch : MonoBehaviour
         z = (flightWaypoints[0].transform.position.z + flightWaypoints[1].transform.position.z) * 0.5f;
         sky.transform.position = this.transform.position;
         sky.transform.Rotate(90, 0, 0);
+        sky.tag = "Sky";
 
         rotPoint.transform.position = sky.transform.position + new Vector3(50, 0, 0);
         rotPoint2.transform.position = sky.transform.position + new Vector3(-50, 0, 0);

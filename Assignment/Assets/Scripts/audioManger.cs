@@ -2,6 +2,8 @@ using UnityEngine.Audio;
 using UnityEngine;
 using System;
 
+//example taken from https://www.youtube.com/watch?v=6OT43pvUyfY
+
 public class audioManger : MonoBehaviour
 {
     public Sound[] sounds;
