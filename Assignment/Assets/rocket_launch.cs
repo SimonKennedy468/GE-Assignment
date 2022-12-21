@@ -36,14 +36,21 @@ public class rocket_launch : MonoBehaviour
    
     public void startLaunch()
     {
+        if(launch == false)
+        {
+            FindObjectOfType<audioManger>().play("launch");
+            FindObjectOfType<audioManger>().play("flight");
+        }
+        
         launch = true;
     }
 
     // Start is called before the first frame update
     IEnumerator flight()
     {
+
         
-            if (Vector3.Distance(this.transform.position, flightWaypoints[currentWaypoint].transform.position) < 3)
+        if (Vector3.Distance(this.transform.position, flightWaypoints[currentWaypoint].transform.position) < 3)
             {
                 currentWaypoint++;
 
@@ -186,6 +193,8 @@ public class rocket_launch : MonoBehaviour
         StartCoroutine(destroySky());
         StopCoroutine(skyChange());
         StopCoroutine(flight());
+        FindObjectOfType<audioManger>().pause("flight");
+
         gameOver = true;
         
     }
@@ -218,6 +227,9 @@ public class rocket_launch : MonoBehaviour
             createdSky = false;
             launch = true;
             skyDestroyed = false;
+
+            FindObjectOfType<audioManger>().play("launch");
+            FindObjectOfType<audioManger>().play("flight");
 
             flightWaypoints.Clear();
 
@@ -261,6 +273,7 @@ public class rocket_launch : MonoBehaviour
     {
         if(launch == true)
         {
+            
             if (reachedLaunchEnd == false)
             {
                 this.transform.Translate(0, speed * Time.deltaTime, 0);
@@ -318,6 +331,7 @@ public class rocket_launch : MonoBehaviour
                         }
                         if (avoiding == false)
                         {
+                            
                             StartCoroutine(flight());
                         }
 

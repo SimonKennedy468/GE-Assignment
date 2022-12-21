@@ -44,6 +44,7 @@ public class leftHandStart : MonoBehaviour
 
     private void Action_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
+        
         rocket = GameObject.Find("Rocket");
         rl = (rocket_launch)rocket.GetComponent(typeof(rocket_launch));
         rl.startLaunch();

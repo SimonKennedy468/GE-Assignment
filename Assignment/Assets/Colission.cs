@@ -16,6 +16,7 @@ public class Colission : MonoBehaviour
     {
         if(other.gameObject.tag == "Asteroid")
         {
+            FindObjectOfType<audioManger>().play("crash");
             Debug.Log("collided");
             Rigidbody rb;
             rb = GetComponent<Rigidbody>();
@@ -25,6 +26,8 @@ public class Colission : MonoBehaviour
             rocket = GameObject.Find("Rocket");
             rl = (rocket_launch)rocket.GetComponent(typeof(rocket_launch));
             rl.startDestroySky();
+
+            
         }
     }
     /*
