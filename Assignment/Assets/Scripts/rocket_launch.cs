@@ -5,7 +5,7 @@ using UnityEngine;
 public class rocket_launch : MonoBehaviour
 {
 
-    public float launchDistance = 5;
+    public float launchDistance = 20;
     public int numWayPoints = 100;
     public int radius = 10;
     public float speed = 15;
@@ -128,10 +128,10 @@ public class rocket_launch : MonoBehaviour
         float z;
         float angle;
 
-        angle = 1 * Mathf.PI * 2;
-        y = Mathf.Cos(angle) * radius;
+        //angle = 1 * Mathf.PI * 2;
+        //y = Mathf.Cos(angle) * radius;
 
-        Vector3 rotPos = this.transform.position + new Vector3(0, y, 0);
+        Vector3 flightCentre = new Vector3(0, launchDistance, 0);
 
         for (int i = 0; i < numWayPoints; i++)
         {
@@ -140,7 +140,7 @@ public class rocket_launch : MonoBehaviour
             y = Mathf.Cos(angle) * 10;
 
             GameObject go = new GameObject();
-            Vector3 pos = rotPos + new Vector3(x, y, 0);
+            Vector3 pos = this.transform.position + new Vector3(x, y, 0);
             go.transform.Translate(pos);
 
             flightWaypoints.Add(go);
@@ -156,7 +156,7 @@ public class rocket_launch : MonoBehaviour
         x = (flightWaypoints[0].transform.position.x + flightWaypoints[1].transform.position.x) * 0.5f;
         y = (flightWaypoints[0].transform.position.y + flightWaypoints[1].transform.position.y) * 0.5f;
         z = (flightWaypoints[0].transform.position.z + flightWaypoints[1].transform.position.z) * 0.5f;
-        sky.transform.position = new Vector3(x, y, z);
+        sky.transform.position = this.transform.position;
         sky.transform.Rotate(90, 0, 0);
 
         rotPoint.transform.position = sky.transform.position + new Vector3(50, 0, 0);
@@ -166,7 +166,6 @@ public class rocket_launch : MonoBehaviour
         Stars.transform.position = rotPoint.transform.position - new Vector3(35, 0, -0.5f);
         Stars.transform.localScale = new Vector3(1, 1, 1);
         Stars.Play();
-        Debug.Log("Stars have played");
 
 
         sky.GetComponent<Renderer>().material.color = blueNight;
@@ -206,6 +205,7 @@ public class rocket_launch : MonoBehaviour
 
         sky.transform.localScale -= Vector3.one * Time.deltaTime * 3;
         Stars.transform.localScale -= Vector3.one * Time.deltaTime * 3;
+        sky.transform.position = this.transform.position;
 
         if (sky.transform.localScale.x < 0.1f)
         {

@@ -5,7 +5,7 @@ using UnityEngine;
 public class CreateGizmos : MonoBehaviour
 {
 
-    public float launchDistance = 5;
+    public float launchDistance = 20;
     public int numWayPoints = 3;
     public int radius = 15;
 
