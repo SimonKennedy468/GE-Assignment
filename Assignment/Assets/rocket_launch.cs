@@ -25,6 +25,7 @@ public class rocket_launch : MonoBehaviour
     public ParticleSystem Engine;
     public bool avoiding = false;
     public bool gameOver = false;
+    public bool createdSky = false;
    
 
 
@@ -40,7 +41,6 @@ public class rocket_launch : MonoBehaviour
                 if (currentWaypoint > 1)
                 {
                     currentWaypoint = 0;
-
 
                 }
             }
@@ -89,61 +89,7 @@ public class rocket_launch : MonoBehaviour
     }
 
 
-    public void startDestroySky()
-    {
-        Debug.Log("-------------------------> start destroy");
-        StartCoroutine(destroySky());
-        StopCoroutine(skyChange());
-        StopCoroutine(flight());
-        gameOver = true;
-        
-    }
-    public IEnumerator destroySky()
-    {
-        
-        Stars.Stop();
-        if (gameOver == true)
-        {
-            sky.transform.localScale -= Vector3.one * Time.deltaTime * 3;
-            Stars.transform.localScale -= Vector3.one * Time.deltaTime * 3;
-            Debug.Log("Shrinking...");
-            if (sky.transform.localScale.x < 0.1f)
-            {
-                Destroy(sky);
-                Stars.Stop();
-            }
-        }
-        yield return null;
-
-    }
-
-
-    private void Awake()
-    {
-
-        float x;
-        float y;
-        float angle ;
-
-        angle = 1 * Mathf.PI * 2;
-        y = Mathf.Cos(angle) * radius;
-
-        launchEnd = transform.position + new Vector3(0, y + launchDistance, 0);
-
-        for (int i = 0; i < numWayPoints; i++)
-        {
-            angle = i * Mathf.PI * 2 / numWayPoints;
-            x = Mathf.Sin(angle) * radius;
-            y = Mathf.Cos(angle) * radius;
-
-            GameObject go = new GameObject();
-            Vector3 pos = launchEnd + new Vector3(x, y, 0);
-            go.transform.Translate(pos);
-            waypoints.Add(go);
-        }
-    }
-
-    void createSky()
+    public void createSky()
     {
         float x;
         float y;
@@ -179,7 +125,6 @@ public class rocket_launch : MonoBehaviour
         z = (flightWaypoints[0].transform.position.z + flightWaypoints[1].transform.position.z) * 0.5f;
         sky.transform.position = new Vector3(x, y, z);
         sky.transform.Rotate(90, 0, 0);
-        sky.transform.localScale = new Vector3(3, 3, 3);
 
         rotPoint.transform.position = sky.transform.position + new Vector3(50, 0, 0);
 
@@ -190,7 +135,76 @@ public class rocket_launch : MonoBehaviour
 
         sky.GetComponent<Renderer>().material.color = blueNight;
 
+
     }
+
+    public IEnumerator growSky()
+    {
+        if (sky.transform.localScale.x < 3)
+        {
+            Debug.Log("Growing");
+            sky.transform.localScale += Vector3.one * Time.deltaTime * 3;
+        }
+        else
+        {
+            createdSky = true;
+        }
+        yield return null;
+    }
+
+    public void startDestroySky()
+    {
+        Debug.Log("-------------------------> start destroy");
+        StartCoroutine(destroySky());
+        StopCoroutine(skyChange());
+        StopCoroutine(flight());
+        gameOver = true;
+        
+    }
+    public IEnumerator destroySky()
+    {
+        
+        Stars.Stop();
+
+        sky.transform.localScale -= Vector3.one * Time.deltaTime * 3;
+        Stars.transform.localScale -= Vector3.one * Time.deltaTime * 3;
+        Debug.Log("Shrinking...");
+        if (sky.transform.localScale.x < 0.1f)
+        {
+            Destroy(sky);
+            Stars.Stop();
+        }
+        yield return null;
+
+    }
+
+
+    private void Awake()
+    {
+
+        float x;
+        float y;
+        float angle ;
+
+        angle = 1 * Mathf.PI * 2;
+        y = Mathf.Cos(angle) * radius;
+
+        launchEnd = transform.position + new Vector3(0, y + launchDistance, 0);
+
+        for (int i = 0; i < numWayPoints; i++)
+        {
+            angle = i * Mathf.PI * 2 / numWayPoints;
+            x = Mathf.Sin(angle) * radius;
+            y = Mathf.Cos(angle) * radius;
+
+            GameObject go = new GameObject();
+            Vector3 pos = launchEnd + new Vector3(x, y, 0);
+            go.transform.Translate(pos);
+            waypoints.Add(go);
+        }
+    }
+
+   
 
     // Update is called once per frame
     void Update()
@@ -243,9 +257,13 @@ public class rocket_launch : MonoBehaviour
             {
                 if (gameOver == false)
                 {
-                    if (flightWaypoints.Count == 0)
+                    if(flightWaypoints.Count == 0)
                     {
                         createSky();
+                    }
+                    if (createdSky == false)
+                    {
+                        StartCoroutine(growSky());
                     }
                     if(avoiding == false)
                     {

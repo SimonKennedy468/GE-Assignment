@@ -26,7 +26,7 @@ public class Colission : MonoBehaviour
             rl.startDestroySky();
         }
     }
-
+    /*
     private void OnTriggerExit(Collider other)
     {
         if(other.gameObject.tag == "Asteroid")
@@ -34,7 +34,8 @@ public class Colission : MonoBehaviour
             rocket = GameObject.Find("Rocket");
             rl = (rocket_launch)rocket.GetComponent(typeof(rocket_launch));
             rl.startDestroySky();
-            rl.destroySky();
+
         }
     }
+    */
 }
