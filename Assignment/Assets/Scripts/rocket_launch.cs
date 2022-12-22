@@ -5,12 +5,12 @@ using UnityEngine;
 public class rocket_launch : MonoBehaviour
 {
 
-    public float launchDistance = 5;
+    public float launchDistance = 20;
     public int numWayPoints = 100;
     public int radius = 10;
     public float speed = 15;
     public int currentWaypoint = 0;
-    
+
     List<GameObject> waypoints = new List<GameObject>();
     List<GameObject> flightWaypoints = new List<GameObject>();
     Vector3 launchEnd;
@@ -33,15 +33,15 @@ public class rocket_launch : MonoBehaviour
     public bool launch = false;
     public bool skyDestroyed = false;
     public bool dodgeForward = false;
-   
+
     public void startLaunch()
     {
-        if(launch == false)
+        if (launch == false)
         {
             FindObjectOfType<audioManger>().play("launch");
             FindObjectOfType<audioManger>().play("flight");
         }
-        
+
         launch = true;
     }
 
@@ -49,24 +49,24 @@ public class rocket_launch : MonoBehaviour
     IEnumerator flight()
     {
 
-        
+
         if (Vector3.Distance(this.transform.position, flightWaypoints[currentWaypoint].transform.position) < 3)
+        {
+            currentWaypoint++;
+
+
+            if (currentWaypoint > 1)
             {
-                currentWaypoint++;
+                currentWaypoint = 0;
 
-
-                if (currentWaypoint > 1)
-                {
-                    currentWaypoint = 0;
-
-                }
             }
+        }
 
-            Vector3 directon = rotPoint.transform.position - transform.position;
-            Quaternion toRotate = Quaternion.FromToRotation(Vector3.up, directon);
-            transform.rotation = toRotate;
+        Vector3 directon = rotPoint.transform.position - transform.position;
+        Quaternion toRotate = Quaternion.FromToRotation(Vector3.up, directon);
+        transform.rotation = toRotate;
 
-            transform.position = Vector3.MoveTowards(transform.position, flightWaypoints[currentWaypoint].transform.position, speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, flightWaypoints[currentWaypoint].transform.position, speed * Time.deltaTime);
 
         yield return null;
     }
@@ -100,6 +100,9 @@ public class rocket_launch : MonoBehaviour
         Quaternion toRotate = Quaternion.FromToRotation(Vector3.up, directon);
         transform.rotation = toRotate;
 
+        transform.position = Vector3.MoveTowards(transform.position, directon, speed * Time.deltaTime);
+
+        /*
         if(dodgeForward == true)
         {
             transform.position = Vector3.MoveTowards(transform.position, directon, speed * Time.deltaTime);
@@ -114,6 +117,7 @@ public class rocket_launch : MonoBehaviour
         directon = rotPoint.transform.position - transform.position;
         toRotate = Quaternion.FromToRotation(Vector3.up, directon);
         transform.rotation = toRotate;
+        */
 
 
 
@@ -128,10 +132,10 @@ public class rocket_launch : MonoBehaviour
         float z;
         float angle;
 
-        angle = 1 * Mathf.PI * 2;
-        y = Mathf.Cos(angle) * radius;
+        //angle = 1 * Mathf.PI * 2;
+        //y = Mathf.Cos(angle) * radius;
 
-        Vector3 rotPos = this.transform.position + new Vector3(0, y, 0);
+        Vector3 flightCentre = new Vector3(0, launchDistance, 0);
 
         for (int i = 0; i < numWayPoints; i++)
         {
@@ -140,7 +144,7 @@ public class rocket_launch : MonoBehaviour
             y = Mathf.Cos(angle) * 10;
 
             GameObject go = new GameObject();
-            Vector3 pos = rotPos + new Vector3(x, y, 0);
+            Vector3 pos = this.transform.position + new Vector3(x, y, 0);
             go.transform.Translate(pos);
 
             flightWaypoints.Add(go);
@@ -156,8 +160,9 @@ public class rocket_launch : MonoBehaviour
         x = (flightWaypoints[0].transform.position.x + flightWaypoints[1].transform.position.x) * 0.5f;
         y = (flightWaypoints[0].transform.position.y + flightWaypoints[1].transform.position.y) * 0.5f;
         z = (flightWaypoints[0].transform.position.z + flightWaypoints[1].transform.position.z) * 0.5f;
-        sky.transform.position = new Vector3(x, y, z);
+        sky.transform.position = this.transform.position;
         sky.transform.Rotate(90, 0, 0);
+        sky.tag = "Sky";
 
         rotPoint.transform.position = sky.transform.position + new Vector3(50, 0, 0);
         rotPoint2.transform.position = sky.transform.position + new Vector3(-50, 0, 0);
@@ -166,7 +171,6 @@ public class rocket_launch : MonoBehaviour
         Stars.transform.position = rotPoint.transform.position - new Vector3(35, 0, -0.5f);
         Stars.transform.localScale = new Vector3(1, 1, 1);
         Stars.Play();
-        Debug.Log("Stars have played");
 
 
         sky.GetComponent<Renderer>().material.color = blueNight;
@@ -197,15 +201,16 @@ public class rocket_launch : MonoBehaviour
         FindObjectOfType<audioManger>().pause("flight");
 
         gameOver = true;
-        
+
     }
     public IEnumerator destroySky()
     {
-        
+
         Stars.Pause();
 
         sky.transform.localScale -= Vector3.one * Time.deltaTime * 3;
         Stars.transform.localScale -= Vector3.one * Time.deltaTime * 3;
+        sky.transform.position = this.transform.position;
 
         if (sky.transform.localScale.x < 0.1f)
         {
@@ -218,8 +223,8 @@ public class rocket_launch : MonoBehaviour
 
     public void restart()
     {
-        
-        if(gameOver == true)
+
+        if (gameOver == true)
         {
             reachedLaunchEnd = false;
             reachedSpinEnd = false;
@@ -238,8 +243,8 @@ public class rocket_launch : MonoBehaviour
             //Quaternion toRotate = Quaternion.FromToRotation(Vector3.up, direction);
             //transform.rotation = toRotate;
         }
-        
-        
+
+
     }
 
     private void Awake()
@@ -247,7 +252,7 @@ public class rocket_launch : MonoBehaviour
 
         float x;
         float y;
-        float angle ;
+        float angle;
 
         angle = 1 * Mathf.PI * 2;
         y = Mathf.Cos(angle) * radius;
@@ -267,14 +272,14 @@ public class rocket_launch : MonoBehaviour
         }
     }
 
-   
+
 
     // Update is called once per frame
     void Update()
     {
-        if(launch == true)
+        if (launch == true)
         {
-            
+
             if (reachedLaunchEnd == false)
             {
                 this.transform.Translate(0, speed * Time.deltaTime, 0);
@@ -332,7 +337,7 @@ public class rocket_launch : MonoBehaviour
                         }
                         if (avoiding == false)
                         {
-                            
+
                             StartCoroutine(flight());
                         }
 
@@ -340,29 +345,29 @@ public class rocket_launch : MonoBehaviour
                     }
                     else
                     {
-                        if(skyDestroyed == false)
+                        if (skyDestroyed == false)
                         {
                             StartCoroutine(destroySky());
                         }
-                        
+
                     }
 
 
                 }
             }
         }
-        
+
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag == "Danger")
+        if (other.gameObject.tag == "Danger")
         {
 
             StopCoroutine(flight());
             StartCoroutine(avoid());
             avoiding = true;
-            
+
         }
     }
 
@@ -385,7 +390,7 @@ public class rocket_launch : MonoBehaviour
             {
                 dodgeForward = false;
             }
-            else if(dodgeForward == false)
+            else if (dodgeForward == false)
             {
                 dodgeForward = true;
             }
