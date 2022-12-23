@@ -6,7 +6,7 @@ Student Number: C19496436
 
 Class Group: DT211c / TU857
 
-Video: [!Youtube]()(https://youtu.be/C3MYT825J_s)
+Video: [Youtube]()(https://youtu.be/C3MYT825J_s)
 
 ## Descripotion of the Project
 For this project, I createed a VR retro-styled SSTO 3 finned rocket ship that will take off from the groud , fly around in a circle and then hover in the air. While hovering, it will move up and down and rotate slightly, while projecting a night sky that shifts from blue to purple and fly's past multi-colored stars. The player has several asteroids around them that they can pick up and throw at the ship. If the asteroids hit the sky, they will stick in place. If the ship detects that it is about to collide with an asteroid, it will attempt to dodge out of the way. If it is actually hit however, it will retract the sky and stars, and crash into the ground. 
