@@ -1,4 +1,5 @@
 //Class to controll the left hand controllers buttons using the new input method 
+//refrenced from https://www.youtube.com/watch?v=u6Rlr2021vw
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
