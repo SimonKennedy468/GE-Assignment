@@ -124,7 +124,6 @@ public class rocket : MonoBehaviour
     {
         float x;
         float y;
-        float z;
         float angle;
 
         //use sine and cosine to calculate 2 gameobjects above and below the ship to use as waypoints
