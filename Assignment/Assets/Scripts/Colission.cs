@@ -1,3 +1,4 @@
+//Class to detect if asteroid actually collides with ship
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,12 +7,13 @@ using UnityEngine;
 public class Colission : MonoBehaviour
 {
 
+    //get particle system fro engine, the rocket script and the rocket object
     public ParticleSystem Engine;
-    public rocket_launch rl;
+    public rocket rocketScript;
     public GameObject rocket;
 
 
-    // Start is called before the first frame update
+    // check if asteroid collided
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.tag == "Asteroid")
@@ -20,26 +22,17 @@ public class Colission : MonoBehaviour
             Debug.Log("collided");
             Rigidbody rb;
             rb = GetComponent<Rigidbody>();
+            //make rocket ragdoll and fall
             rb.isKinematic = false;
             rb.useGravity = true;
             Engine.Stop();
+
+            //stop rocket co-routines
             rocket = GameObject.Find("Rocket");
-            rl = (rocket_launch)rocket.GetComponent(typeof(rocket_launch));
-            rl.startDestroySky();
+            rocketScript = (rocket)rocket.GetComponent(typeof(rocket));
+            rocketScript.startDestroySky();
 
             
         }
     }
-    /*
-    private void OnTriggerExit(Collider other)
-    {
-        if(other.gameObject.tag == "Asteroid")
-        {
-            rocket = GameObject.Find("Rocket");
-            rl = (rocket_launch)rocket.GetComponent(typeof(rocket_launch));
-            rl.startDestroySky();
-
-        }
-    }
-    */
 }

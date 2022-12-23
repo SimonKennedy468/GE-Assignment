@@ -1,33 +1,24 @@
+/*class to create gizmos and view in scene view. 
+ *kept in seperate class as gizmos will follow ship otherwise
+ *also need to reset variables manually seperate from rocket script
+ */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CreateGizmos : MonoBehaviour
 {
-
+    //store vars for waypoints and distance 
     public float launchDistance = 5;
     public int numWayPoints = 3;
     public int radius = 15;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void OnDrawGizmos()
     {
-        //if (!Application.isPlaying)
-        //{
-            float x = 0;
-            float y = 0;
-            float angle = 0;
+            float x;
+            float y;
+            float angle;
 
             angle = 1 * Mathf.PI * 2;
             y = Mathf.Cos(angle) * radius;
@@ -36,6 +27,7 @@ public class CreateGizmos : MonoBehaviour
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(launchEnd, 1);
 
+            //draw gimos in circle around the "launch distance" point  
             for (int i = 0; i < numWayPoints; i++)
             {
                 angle = i * Mathf.PI * 2 / numWayPoints;
