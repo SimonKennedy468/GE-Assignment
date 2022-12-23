@@ -29,7 +29,7 @@ public class audioManger : MonoBehaviour
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
         s.source.Play();
-
+        Debug.Log("Playing sound" + name);
     }
 
     //pause method
